@@ -1,77 +1,69 @@
-# React + TypeScript + Vite
+# CareerCompass AI — Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The student-facing web application for CareerCompass AI. Built with React, TypeScript, and Tailwind CSS.
 
-Currently, two official plugins are available:
+**Live site:** https://careercompass-frontend-seven.vercel.app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+- **Framework:** React 19 + TypeScript
+- **Build tool:** Vite
+- **Styling:** Tailwind CSS v4
+- **Routing:** React Router
+- **HTTP client:** Axios (with automatic access-token refresh on expiry)
+- **Fonts:** Fraunces (display), IBM Plex Sans (body), IBM Plex Mono (data/technical)
 
-Note: This will impact Vite dev & build performances.
+## Design System
 
-## Expanding the ESLint configuration
+The visual identity follows a "wayfinding" concept — navigation instruments and topographic charts — reflecting the product's core idea of plotting a student's profile and finding a bearing toward a career. The RIASEC hexagonal radar chart is the signature visual element, used both decoratively (landing page) and functionally (results page).
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Palette:** Chart Navy (ink), Chart Paper (background), Compass Gold (primary actions), Trail Teal (secondary accents), Signal Rust (errors only).
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started Locally
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Prerequisites
+- Node.js 20+
+- The backend API running (locally or deployed) — see the [backend README](https://github.com/graceniyik/careercompass-backend)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Setup
 
+```bash
+git clone https://github.com/graceniyik/careercompass-frontend.git
+cd careercompass-frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Create a `.env` file:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```env
+VITE_API_BASE_URL=http://localhost:3000
 ```
+
+(Point this at your deployed backend URL if not running the backend locally.)
+
+### Start the development server
+
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+## Key Features
+
+- **Assessment flow:** structured RIASEC (Likert-scale) questions plus open-ended qualitative prompts
+- **Results dashboard:** functional RIASEC radar chart, ranked career recommendations with match scores, skill-gap indicators
+- **AI-generated explanations:** personalized, natural-language reasoning for each recommendation, with a live-updating "generating" state (polling) while the AI processes in the background
+- **Ask about this match:** a bounded follow-up Q&A feature letting students ask clarifying questions about a specific recommendation
+- **Career comparison:** overlay up to 3 recommended careers on a single radar chart with a side-by-side skill breakdown
+- **Role-based routing:** separate flows for Students, Counselors, and Admins, each protected by role-aware route guards
+
+## Deployment
+
+Deployed on [Vercel](https://vercel.com). Build settings are auto-detected (Vite defaults). Requires the `VITE_API_BASE_URL` environment variable to be set to the deployed backend's URL.
+
+## Authentication Handling
+
+Access tokens (15-minute lifespan) are stored in `sessionStorage` and automatically refreshed via the refresh token when expired, using an Axios response interceptor. If the refresh token itself is invalid or expired, the user is redirected to the login page.
